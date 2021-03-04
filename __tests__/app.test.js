@@ -31,35 +31,124 @@ describe('app routes', () => {
       return client.end(done);
     });
 
-    test('returns animals', async() => {
+    test('adds new plant to faves & verifies that it is there', async() => {
+
+      const plant = {
+        id: 2,
+        common_name: 'neat plant',
+        scientific_name: 'pantus neatus',
+        year: 1994,
+        family_common_name: 'neat',
+        image_url: 'http://placekitten.com/300',
+        genus: 'plantus',
+        family: 'flora'
+      };
 
       const expectation = [
         {
-          'id': 1,
-          'name': 'bessie',
-          'coolfactor': 3,
-          'owner_id': 1
-        },
-        {
-          'id': 2,
-          'name': 'jumpy',
-          'coolfactor': 4,
-          'owner_id': 1
-        },
-        {
-          'id': 3,
-          'name': 'spot',
-          'coolfactor': 10,
-          'owner_id': 1
+          _id: 4,
+          id: 2,
+          common_name: 'neat plant',
+          scientific_name: 'pantus neatus',
+          year: 1994,
+          family_common_name: 'neat',
+          image_url: 'http://placekitten.com/300',
+          genus: 'plantus',
+          family: 'flora',
+          user_id: 2
         }
       ];
 
+      await fakeRequest(app)
+        .post('/api/faves')
+        .set('Authorization', token)
+        .send(plant);
+        
       const data = await fakeRequest(app)
-        .get('/animals')
+        .get('/api/faves')
+        .set('Authorization', token)
         .expect('Content-Type', /json/)
         .expect(200);
 
       expect(data.body).toEqual(expectation);
     });
+    
+    test('fetches a particular plant from faves', async() => {
+
+      const expectation = {
+        _id: 4,
+        id: 2,
+        common_name: 'neat plant',
+        scientific_name: 'pantus neatus',
+        year: 1994,
+        family_common_name: 'neat',
+        image_url: 'http://placekitten.com/300',
+        genus: 'plantus',
+        family: 'flora',
+        user_id: 2
+      };
+
+      const data = await fakeRequest(app)
+        .get('/api/faves/4')
+        .set('Authorization', token)
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(data.body).toEqual(expectation);
+    });
+
+    test('updates a particular plant in faves', async() => {
+
+      const update = {
+        id: 2,
+        common_name: 'neat plant update',
+        scientific_name: 'pantus neatus',
+        year: 1994,
+        family_common_name: 'neat',
+        image_url: 'http://placekitten.com/300',
+        genus: 'plantus',
+        family: 'flora',
+      };
+
+      const expectation = {
+        _id: 4,
+        id: 2,
+        common_name: 'neat plant update',
+        scientific_name: 'pantus neatus',
+        year: 1994,
+        family_common_name: 'neat',
+        image_url: 'http://placekitten.com/300',
+        genus: 'plantus',
+        family: 'flora',
+        user_id: 2
+      };
+
+      await fakeRequest(app)
+        .put('/api/faves/4')
+        .set('Authorization', token)
+        .send(update);
+
+      const data = await fakeRequest(app)
+        .get('/api/faves/4')
+        .set('Authorization', token)
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(data.body).toEqual(expectation);
+    });
+
+    test('deletes a particular plant from faves', async() => {
+
+      const expectation = '';
+
+      const data = await fakeRequest(app)
+        .delete('/api/faves/4')
+        .set('Authorization', token)
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(data.body).toEqual(expectation);
+    });
+
   });
 });

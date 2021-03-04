@@ -10,10 +10,10 @@ async function run() {
     
     await client.query(`
             DROP TABLE IF EXISTS users CASCADE;
-            DROP TABLE IF EXISTS animals;
+            DROP TABLE IF EXISTS plants;
         `);
 
-    console.log(' drop tables complete', getEmoji(), getEmoji(), getEmoji());
+    console.log('drop tables complete', getEmoji(), getEmoji(), getEmoji());
   }
   catch(err) {
     console.log(err);
